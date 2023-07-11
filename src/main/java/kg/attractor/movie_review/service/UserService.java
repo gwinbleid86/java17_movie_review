@@ -19,6 +19,6 @@ public class UserService {
 
     public void someMethod(int userId) {
         Optional<User> mayByUser = userDao.getOptionalUserById(userId);
-        mayByUser.ifPresent(e -> System.out.printf("%s, %s, %s%n", e.getId(), e.getName(), e.getPassword()));
+        mayByUser.ifPresent(e -> System.out.printf("%s, %s, %s%n", e.getId(), e.getName(), e.getPasswd()));
     }
 }
