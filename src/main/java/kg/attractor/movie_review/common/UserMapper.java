@@ -1,4 +1,4 @@
-package kg.attractor.movie_review.dao;
+package kg.attractor.movie_review.common;
 
 import kg.attractor.movie_review.model.User;
 import org.springframework.jdbc.core.RowMapper;
