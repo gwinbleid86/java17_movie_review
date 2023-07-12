@@ -21,4 +21,8 @@ public class UserService {
         Optional<User> mayByUser = userDao.getOptionalUserById(userId);
         mayByUser.ifPresent(e -> System.out.printf("%s, %s, %s%n", e.getId(), e.getName(), e.getPasswd()));
     }
+
+    public void createUser(User user) {
+        userDao.createUser(user);
+    }
 }
