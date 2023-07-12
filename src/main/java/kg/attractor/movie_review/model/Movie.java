@@ -2,8 +2,6 @@ package kg.attractor.movie_review.model;
 
 import lombok.*;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -14,6 +12,5 @@ public class Movie {
     private Integer releaseYear;
     private String description;
     private Long directorId;
-    private List<Long> castMembersId;
 
 }
