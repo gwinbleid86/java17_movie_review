@@ -23,13 +23,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Void> printUser(@PathVariable int id) {
-        userService.someMethod(id);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping
     public void createUser(@RequestBody User user) {
-        log.error("Username: {}", user.getName());
+        log.info("Username: {}", user.getName());
         userService.createUser(user);
     }
 }
