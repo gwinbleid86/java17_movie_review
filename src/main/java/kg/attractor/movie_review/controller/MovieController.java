@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("/movies") // http://localhost:8089/movies
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
@@ -24,22 +24,23 @@ public class MovieController {
 //        movieService.createMovie(movie);
 //        return ResponseEntity.ok().build();
 //    }
-    @GetMapping
+    @GetMapping // http://localhost:8089/movies
     public List<MovieDto> getMovies() {
         return movieService.getMovies();
     }
 
-    @GetMapping("/search/{name}")
+    @GetMapping
+    @RequestMapping("/search/{name}") // http://localhost:8089/movies/search/test
     public ResponseEntity<?> findMovieByName(@PathVariable String name) {
         return movieService.getMovieByName(name);
     }
 
-    @GetMapping("/sort/{sortedCriteria}")
+    @GetMapping("/sort/{sortedCriteria}") // http://localhost:8089/movies/sort/by_name
     public ResponseEntity<?> sortMovies(@PathVariable String sortedCriteria) {
         return movieService.sortedListMovies(sortedCriteria);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search") // http://localhost:8089/movies/search?cast_member_name=Cast
     public ResponseEntity<?> findMoviesByCastMemberName(@RequestParam(value = "cast_member_name") String name) {
         return movieService.findMoviesByCastMemberName(name);
     }
