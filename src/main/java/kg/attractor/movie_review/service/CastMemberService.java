@@ -28,4 +28,12 @@ public class CastMemberService {
     public Optional<CastMember> findCastMemberByName(String name) {
         return castMemberDao.findCastMemberByName(name);
     }
+
+    public void delete(Long id) {
+        castMemberDao.delete(id);
+    }
+
+    public long save(CastMemberDto castMemberDto) {
+        return castMemberDao.save(CastMember.builder().fullName(castMemberDto.getFullName()).build());
+    }
 }

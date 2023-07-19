@@ -3,6 +3,7 @@ package kg.attractor.movie_review.controller;
 import kg.attractor.movie_review.dto.MovieDto;
 import kg.attractor.movie_review.service.MovieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,7 @@ public class MovieController {
         return movieService.getMovies();
     }
 
-    @GetMapping
-    @RequestMapping("/search/{name}") // http://localhost:8089/movies/search/test
+    @GetMapping("/search/{name}") // http://localhost:8089/movies/search/test
     public ResponseEntity<?> findMovieByName(@PathVariable String name) {
         return movieService.getMovieByName(name);
     }
@@ -43,5 +43,17 @@ public class MovieController {
     @GetMapping("/search") // http://localhost:8089/movies/search?cast_member_name=Cast
     public ResponseEntity<?> findMoviesByCastMemberName(@RequestParam(value = "cast_member_name") String name) {
         return movieService.findMoviesByCastMemberName(name);
+    }
+
+    @PostMapping
+    public HttpStatus createMovie(@RequestBody MovieDto movieDto) {
+        movieService.saveMovie(movieDto);
+        return HttpStatus.OK;
+    }
+
+    @DeleteMapping("{movieId}")
+    public HttpStatus delete(@PathVariable Long movieId) {
+        movieService.delete(movieId);
+        return HttpStatus.OK;
     }
 }
