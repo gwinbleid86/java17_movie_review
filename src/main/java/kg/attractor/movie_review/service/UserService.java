@@ -17,6 +17,6 @@ public class UserService {
     }
 
     public void createUser(User user) {
-        userDao.createUser(user);
+        userDao.save(user);
     }
 }

@@ -1,19 +1,23 @@
 package kg.attractor.movie_review.dao;
 
 import kg.attractor.movie_review.model.Movie;
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-public class MovieDao {
-    private final JdbcTemplate jdbcTemplate;
+public class MovieDao extends BaseDao {
+
+    MovieDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        super(jdbcTemplate, namedParameterJdbcTemplate);
+    }
 
     public List<Movie> getMovies() {
         String sql = "select * from MOVIE;";
@@ -43,5 +47,29 @@ public class MovieDao {
                 "where mcm.CAST_MEMBER_ID = ?\n" +
                 "  and m.ID = mcm.MOVIE_ID;";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Movie.class), id);
+    }
+
+    @Override
+    public Long save(Object obj) {
+        jdbcTemplate.update(con -> {
+            Movie m = (Movie) obj;
+            PreparedStatement ps = con.prepareStatement(
+                    "insert into movie(name, release_year, description, director_id) \n" +
+                            "values (?, ?, ?, ?)",
+                    new String[]{"id"}
+            );
+            ps.setString(1, m.getName());
+            ps.setInt(2, m.getReleaseYear());
+            ps.setString(3, m.getDescription());
+            ps.setLong(4, m.getDirectorId());
+            return ps;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    @Override
+    public void delete(Long id) {
+        String sql = "delete from movie where id = ?;";
+        jdbcTemplate.update(sql, id);
     }
 }

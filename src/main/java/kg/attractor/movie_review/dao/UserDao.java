@@ -1,7 +1,6 @@
 package kg.attractor.movie_review.dao;
 
 import kg.attractor.movie_review.model.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -10,21 +9,30 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class UserDao {
+public class UserDao extends BaseDao {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    UserDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        super(jdbcTemplate, namedParameterJdbcTemplate);
+    }
 
     public List<User> getAllUsers() {
         String sql = "select * from user_table";
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(User.class));
     }
 
-    public void createUser(User user) {
-        String sql = "insert into user_table(email, username, password)\n" +
-                "values(?, ?, ?);";
+    @Override
+    public Long save(Object obj) {
+        User u = (User) obj;
+        return (long) jdbcTemplate.update(
+                "insert into user_table(email, username, password) values (?, ?, ?)",
+                u.getEmail(),
+                u.getName(),
+                u.getPasswd()
+        );
+    }
 
-        jdbcTemplate.update(sql, user.getEmail(), user.getName(), user.getPasswd());
+    @Override
+    public void delete(Long id) {
     }
 }

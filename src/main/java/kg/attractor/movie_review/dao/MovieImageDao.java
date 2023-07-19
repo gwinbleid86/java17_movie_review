@@ -1,15 +1,20 @@
 package kg.attractor.movie_review.dao;
 
 import kg.attractor.movie_review.model.MovieImage;
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.PreparedStatement;
+import java.util.Objects;
+
 @Component
-@RequiredArgsConstructor
-public class MovieImageDao {
-    private final JdbcTemplate jdbcTemplate;
+public class MovieImageDao extends BaseDao {
+
+    MovieImageDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        super(jdbcTemplate, namedParameterJdbcTemplate);
+    }
 
     public void save(MovieImage movieImage) {
         String sql = "insert into movie_images (movie_id, file_name) " +
@@ -20,5 +25,28 @@ public class MovieImageDao {
     public MovieImage getImageById(long imageId) {
         String sql = "select * from MOVIE_IMAGES where ID = ?";
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(MovieImage.class), imageId);
+    }
+
+    @Override
+    public Long save(Object obj) {
+        jdbcTemplate.update(con -> {
+            MovieImage mi = (MovieImage) obj;
+            PreparedStatement ps = con.prepareStatement(
+                    "insert into movie_images(movie_id, file_name) values (?, ?)",
+                    new String[]{"id"}
+            );
+            ps.setLong(1, mi.getMovieId());
+            ps.setString(2, mi.getFileName());
+            return ps;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+    @Override
+    public void delete(Long id) {
+        jdbcTemplate.update(
+                "delete from movie_images where id = ?;",
+                id
+        );
     }
 }

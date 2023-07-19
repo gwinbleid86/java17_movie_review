@@ -8,4 +8,5 @@ import lombok.Data;
 public class CastMemberDto {
     private Long id;
     private String fullName;
+    private String role;
 }
