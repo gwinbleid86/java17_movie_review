@@ -25,11 +25,9 @@ public class SecurityConfig {
             "from user_table \n" +
             "where email = ?;";
 
-    private static final String FETCH_ROLES_QUERY = "select email, role \n" +
-            "from roles r, \n" +
-            "user_table u \n" +
-            "where u.email = ? \n" +
-            "and u.role_id = r.id;";
+    private static final String FETCH_ROLES_QUERY = "select user_email, role \n" +
+            "from roles \n" +
+            "where user_email = ?;";
 
     @Bean
     public PasswordEncoder encoder() {
