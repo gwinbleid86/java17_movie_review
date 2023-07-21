@@ -4,6 +4,8 @@ import kg.attractor.movie_review.dao.ReviewDao;
 import kg.attractor.movie_review.dto.ReviewDto;
 import kg.attractor.movie_review.model.Review;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +15,13 @@ import java.util.List;
 public class ReviewService {
     private final ReviewDao reviewDao;
 
-    public void addReview(ReviewDto reviewDto) {
+    public void addReview(ReviewDto reviewDto, Authentication auth) {
+        User user = (User) auth.getPrincipal();
         reviewDao.save(Review.builder()
                 .rating(reviewDto.getRating())
                 .comment(reviewDto.getComment())
                 .movieId(reviewDto.getMovieId())
-                .reviewer(reviewDto.getReviewer())
+                .reviewer(user.getUsername())
                 .build());
     }
 

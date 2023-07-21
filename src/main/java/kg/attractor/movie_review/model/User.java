@@ -9,4 +9,6 @@ public class User {
     private String email;
     private String name;
     private String passwd;
+    private boolean enabled;
+    private Long roleId;
 }

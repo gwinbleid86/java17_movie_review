@@ -5,6 +5,7 @@ import kg.attractor.movie_review.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,9 +46,9 @@ public class MovieController {
         return movieService.findMoviesByCastMemberName(name);
     }
 
-    @PostMapping
-    public HttpStatus createMovie(@RequestBody MovieDto movieDto) {
-        movieService.saveMovie(movieDto);
+    @PostMapping("/add")
+    public HttpStatus createMovie(@RequestBody MovieDto movieDto, Authentication auth) {
+        movieService.saveMovie(movieDto, auth);
         return HttpStatus.OK;
     }
 
