@@ -4,6 +4,7 @@ import kg.attractor.movie_review.dto.ReviewDto;
 import kg.attractor.movie_review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class ReviewController {
     }
 
     @PostMapping
-    public HttpStatus addReview(@RequestBody ReviewDto reviewDto) {
-        reviewService.addReview(reviewDto);
+    public HttpStatus addReview(@RequestBody ReviewDto reviewDto, Authentication auth) {
+        reviewService.addReview(reviewDto, auth);
         return HttpStatus.OK;
     }
 }

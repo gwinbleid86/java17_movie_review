@@ -12,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -95,7 +97,10 @@ public class MovieService {
                 .build();
     }
 
-    public void saveMovie(MovieDto movieDto) {
+    public void saveMovie(MovieDto movieDto, Authentication auth) {
+        User u = (User) auth.getPrincipal();
+        log.info(u.getUsername());
+
         var mayBeDirector = directorService.findDirectorByName(movieDto.getDirector().getFullName());
         long directorId;
         if (mayBeDirector.isPresent()) {

@@ -46,10 +46,10 @@ public class DirectorDao extends BaseDao {
     }
 
     public Optional<Director> findDirectorByName(String fullName) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject(
+        return Optional.ofNullable(DataAccessUtils.singleResult(jdbcTemplate.query(
                 "select * from director where fullname like ?;",
                 new BeanPropertyRowMapper<>(Director.class),
                 "%" + fullName + "%"
-        ));
+        )));
     }
 }
