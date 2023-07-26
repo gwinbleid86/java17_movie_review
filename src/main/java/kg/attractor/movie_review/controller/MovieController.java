@@ -21,9 +21,19 @@ public class MovieController {
         return movieService.getMovies();
     }
 
+    @GetMapping("/sort/{sortedCriteria}") // http://localhost:8089/movies/sort/by_name
+    public ResponseEntity<?> sortMovies(@PathVariable String sortedCriteria) {
+        return movieService.sortedListMovies(sortedCriteria);
+    }
+
     @GetMapping("/search/{name}") // http://localhost:8089/movies/search/test
     public ResponseEntity<?> findMovieByName(@PathVariable String name) {
         return movieService.getMovieByName(name);
+    }
+
+    @GetMapping("/search") // http://localhost:8089/movies/search?cast_member_name=Cast
+    public ResponseEntity<?> findMoviesByCastMemberName(@RequestParam(value = "cast_member_name") String name) {
+        return movieService.findMoviesByCastMemberName(name);
     }
 
     @PostMapping("/add")
