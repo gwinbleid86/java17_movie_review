@@ -72,4 +72,12 @@ public class MovieDao extends BaseDao {
         String sql = "delete from movie where id = ?;";
         jdbcTemplate.update(sql, id);
     }
+
+    public Optional<Movie> findMovieById(Long movieId) {
+        return Optional.ofNullable(DataAccessUtils.singleResult(
+                jdbcTemplate.query("select * from movie where id = ?",
+                        new BeanPropertyRowMapper<>(Movie.class),
+                        movieId)
+        ));
+    }
 }

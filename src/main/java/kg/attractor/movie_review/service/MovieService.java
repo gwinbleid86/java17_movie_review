@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -143,4 +144,18 @@ public class MovieService {
         movieDao.delete(id);
     }
 
+    public MovieDto getMovieById(Long movieId) {
+        var movie = movieDao.findMovieById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
+        var director = directorService.findDirectorById(movie.getDirectorId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
+        return MovieDto.builder()
+                .id(movie.getId())
+                .name(movie.getName())
+                .releaseYear(movie.getReleaseYear())
+                .description(movie.getDescription())
+                .director(DirectorDto.builder()
+                        .id(director.getId())
+                        .fullName(director.getFullName())
+                        .build())
+                .build();
+    }
 }

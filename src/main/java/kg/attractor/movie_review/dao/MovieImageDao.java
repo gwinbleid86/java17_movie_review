@@ -1,6 +1,7 @@
 package kg.attractor.movie_review.dao;
 
 import kg.attractor.movie_review.model.MovieImage;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,7 +25,7 @@ public class MovieImageDao extends BaseDao {
 
     public MovieImage getImageById(long imageId) {
         String sql = "select * from MOVIE_IMAGES where ID = ?";
-        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(MovieImage.class), imageId);
+        return DataAccessUtils.singleResult(jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(MovieImage.class), imageId));
     }
 
     @Override

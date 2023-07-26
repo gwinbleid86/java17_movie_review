@@ -25,10 +25,10 @@ public class UserDao extends BaseDao {
     public Long save(Object obj) {
         User u = (User) obj;
         return (long) jdbcTemplate.update(
-                "insert into user_table(email, username, password) values (?, ?, ?)",
+                "insert into user_table(email, password, enabled) values (?, ?, ?)",
                 u.getEmail(),
-                u.getName(),
-                u.getPasswd()
+                u.getPassword(),
+                u.isEnabled()
         );
     }
 
