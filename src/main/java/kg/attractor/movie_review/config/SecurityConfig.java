@@ -21,13 +21,19 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private static final String FETCH_USERS_QUERY = "select email, password, enabled \n" +
-            "from user_table \n" +
-            "where email = ?;";
+    private static final String FETCH_USERS_QUERY = """
+            select email, password, enabled
+            from user_table
+            where email = ?;
+            """;
 
-    private static final String FETCH_ROLES_QUERY = "select user_email, role \n" +
-            "from roles \n" +
-            "where user_email = ?;";
+    private static final String FETCH_AUTHORITIES_QUERY = """
+            select user_email, authority
+             from roles r,
+                  authorities a
+             where user_email = ?
+             and r.authority_id = a.id;
+            """;
 
     @Bean
     public PasswordEncoder encoder() {
@@ -41,7 +47,8 @@ public class SecurityConfig {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery(FETCH_USERS_QUERY)
-                .authoritiesByUsernameQuery(FETCH_ROLES_QUERY);
+                .authoritiesByUsernameQuery(FETCH_AUTHORITIES_QUERY)
+                .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
@@ -53,7 +60,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/movies/add/**")).hasAuthority("ADMIN")
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/movies/add/**")).hasAuthority("FULL")
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/reviews/**")).fullyAuthenticated()
                         .anyRequest().permitAll()
                 );

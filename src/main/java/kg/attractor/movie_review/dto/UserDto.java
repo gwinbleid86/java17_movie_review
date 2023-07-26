@@ -13,8 +13,8 @@ public class UserDto {
 
     @NotBlank
     @Size(min = 4, max = 24,
-            message = "Length must be >= 4 and <= 24")
+            message = "Length of password must be >= 4 and <= 24")
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).+$",
-            message = "Should contain at least one uppercase letter, one number")
+            message = "Password should contain at least one uppercase letter, one number")
     private String password;
 }
