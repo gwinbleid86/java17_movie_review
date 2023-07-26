@@ -1,6 +1,7 @@
 package kg.attractor.movie_review.service;
 
 import kg.attractor.movie_review.dao.UserDao;
+import kg.attractor.movie_review.dto.UserDto;
 import kg.attractor.movie_review.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,11 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    public void createUser(User user) {
-        userDao.save(user);
+    public void createUser(UserDto userDto) {
+        userDao.save(User.builder()
+                .email(userDto.getEmail())
+                .password(userDto.getPassword())
+                .enabled(Boolean.TRUE)
+                .build());
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class MovieImageService {
@@ -25,8 +27,13 @@ public class MovieImageService {
     }
 
     public ResponseEntity<?> downloadImage(long imageId) {
-        MovieImage mi = movieImageDao.getImageById(imageId);
-        String fileName = mi.getFileName();
+        String fileName;
+        try {
+            MovieImage mi = movieImageDao.getImageById(imageId);
+            fileName = mi.getFileName();
+        } catch (NullPointerException e) {
+            throw new NoSuchElementException("Image not found");
+        }
         return fileService.getOutputFile(fileName, SUB_DIR, MediaType.IMAGE_JPEG);
     }
 }

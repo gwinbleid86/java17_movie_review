@@ -1,34 +1,24 @@
 package kg.attractor.movie_review.controller;
 
-import kg.attractor.movie_review.model.User;
+import jakarta.validation.Valid;
+import kg.attractor.movie_review.dto.UserDto;
 import kg.attractor.movie_review.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public List<User> getUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Void> printUser(@PathVariable int id) {
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping
-    public void createUser(@RequestBody User user) {
-        log.info("Username: {}", user.getName());
-        userService.createUser(user);
+    @PostMapping("/register")
+    public void register(@Valid @RequestBody UserDto userDto) {
+        userService.createUser(userDto);
     }
 }
