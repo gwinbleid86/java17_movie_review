@@ -6,10 +6,12 @@ import kg.attractor.movie_review.dto.MovieDto;
 import kg.attractor.movie_review.enums.SortMovieListStrategy;
 import kg.attractor.movie_review.model.Movie;
 import kg.attractor.movie_review.model.MovieCastMember;
+import kg.attractor.movie_review.repository.MovieRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,16 +27,48 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MovieService {
+    MovieRepository repository;
     MovieDao movieDao;
     DirectorService directorService;
     CastMemberService castMemberService;
     MovieCastMemberService movieCastMemberService;
 
-    public List<MovieDto> getMovies() {
-        List<Movie> movies = movieDao.getMovies();
-        return movies.stream()
+    public Page<MovieDto> getMovies(int page, int size, String sort) {
+//        List<Movie> movies = movieDao.getMovies();
+//        return toPage(movies, PageRequest.of(page, size), Sort.by(sort));
+        var list = repository.findAll(PageRequest.of(page, size, Sort.by(sort)));
+        return toPage(list.getContent(), PageRequest.of(list.getNumber(), list.getSize(), list.getSort()));
+    }
+
+    private Page<MovieDto> toPage(List<Movie> movies, Pageable pageable) {
+        var list = movies.stream()
                 .map(this::makeMovieDtoFromMovie)
                 .toList();
+        if (pageable.getOffset() >= list.size()) {
+            return Page.empty();
+        }
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = (int) ((pageable.getOffset() + pageable.getPageSize()) > list.size() ?
+                list.size() :
+                pageable.getOffset() + pageable.getPageSize());
+        List<MovieDto> subList = list.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, list.size());
+    }
+
+    private Page<MovieDto> toPage(List<Movie> movies, Pageable pageable, Sort sort) {
+        var list = sortMovies(movies, sort.get()
+                .map(Sort.Order::getProperty)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Sort property not found")));
+        if (pageable.getOffset() >= list.size()) {
+            return Page.empty();
+        }
+        int startIndex = (int) pageable.getOffset();
+        int endIndex = (int) ((pageable.getOffset() + pageable.getPageSize()) > list.size() ?
+                list.size() :
+                pageable.getOffset() + pageable.getPageSize());
+        List<MovieDto> subList = list.subList(startIndex, endIndex);
+        return new PageImpl<>(subList, pageable, list.size());
     }
 
     public ResponseEntity<?> getMovieByName(String name) {
@@ -48,18 +82,16 @@ public class MovieService {
 
     public ResponseEntity<?> sortedListMovies(String sortedCriteria) {
         List<Movie> movies = movieDao.getMovies();
-        try {
-            var sortedMovies = SortMovieListStrategy.fromString(sortedCriteria).sortingMovies(movies);
-            return new ResponseEntity<>(
-                    sortedMovies.stream()
-                            .map(this::makeMovieDtoFromMovie)
-                            .toList(),
-                    HttpStatus.OK
-            );
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        return new ResponseEntity<>(
+                sortMovies(movies, sortedCriteria),
+                HttpStatus.OK
+        );
+    }
+
+    private List<MovieDto> sortMovies(List<Movie> movies, String sortedCriteria) {
+        return SortMovieListStrategy.fromString(sortedCriteria).sortingMovies(movies).stream()
+                .map(this::makeMovieDtoFromMovie)
+                .toList();
     }
 
     public ResponseEntity<?> findMoviesByCastMemberName(String name) {
@@ -157,5 +189,22 @@ public class MovieService {
                         .fullName(director.getFullName())
                         .build())
                 .build();
+    }
+
+    public ResponseEntity<?> search(String movieId, String movieName, String castMemberName) {
+        // movie_name, cast_member_name, movie_id
+        if (movieId != null && !movieId.isBlank()) {
+            return new ResponseEntity<>(getMovieById(Long.valueOf(movieId)), HttpStatus.OK);
+        }
+
+        if (castMemberName != null && !castMemberName.isBlank()) {
+            return findMoviesByCastMemberName(castMemberName);
+        }
+
+        if (movieName != null && !movieName.isBlank()) {
+            return getMovieByName(movieName);
+        }
+
+        throw new NoSuchElementException("Movie not found");
     }
 }

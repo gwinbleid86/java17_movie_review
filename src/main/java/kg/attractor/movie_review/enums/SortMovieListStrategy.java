@@ -4,6 +4,7 @@ import kg.attractor.movie_review.model.Movie;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public enum SortMovieListStrategy {
     BY_NAME("by_name") {
@@ -26,6 +27,12 @@ public enum SortMovieListStrategy {
             movies.sort(Comparator.comparing(Movie::getDirectorId));
             return movies;
         }
+    },
+    BY_ID("by_id") {
+        @Override
+        public List<Movie> sortingMovies(List<Movie> movies) {
+            return movies;
+        }
     };
 
     private String value;
@@ -38,13 +45,13 @@ public enum SortMovieListStrategy {
         return value;
     }
 
-    public static SortMovieListStrategy fromString(String sortCriteria) throws Exception {
+    public static SortMovieListStrategy fromString(String sortCriteria) {
         for (var e : SortMovieListStrategy.values()) {
             if (e.value.equalsIgnoreCase(sortCriteria)) {
                 return e;
             }
         }
-        throw new Exception("Sorted criteria not found");
+        throw new NoSuchElementException("Sorted criteria not found");
     }
 
     public abstract List<Movie> sortingMovies(List<Movie> movies);
