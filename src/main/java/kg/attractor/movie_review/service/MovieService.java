@@ -179,6 +179,10 @@ public class MovieService {
     public MovieDto getMovieById(Long movieId) {
         var movie = movieDao.findMovieById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
         var director = directorService.findDirectorById(movie.getDirectorId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
+        var castMembers = castMemberService.getCastMembersByMovieId(movie.getId());
+        castMembers.forEach(e -> e.setRole(
+                movieCastMemberService.findRoleByMovieIdAndCastMemberId(movie.getId(), e.getId())
+        ));
         return MovieDto.builder()
                 .id(movie.getId())
                 .name(movie.getName())
@@ -188,6 +192,7 @@ public class MovieService {
                         .id(director.getId())
                         .fullName(director.getFullName())
                         .build())
+                .castMembers(castMembers)
                 .build();
     }
 

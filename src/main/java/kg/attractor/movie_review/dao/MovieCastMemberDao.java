@@ -1,6 +1,7 @@
 package kg.attractor.movie_review.dao;
 
 import kg.attractor.movie_review.model.MovieCastMember;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -44,5 +45,17 @@ public class MovieCastMemberDao extends BaseDao {
 
     @Override
     public void delete(Long id) {
+    }
+
+    public Optional<String> findByMovieIdAndCastMemberId(Long movieId, Long castMemberId) {
+        String sql = """
+                select role
+                from movie_cast_member
+                where movie_id = ?
+                and cast_member_id = ?;
+                """;
+        return Optional.ofNullable(DataAccessUtils.singleResult(
+                jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1), movieId, castMemberId)
+        ));
     }
 }
