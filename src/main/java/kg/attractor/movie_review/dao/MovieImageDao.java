@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class MovieImageDao extends BaseDao {
@@ -48,6 +49,22 @@ public class MovieImageDao extends BaseDao {
         jdbcTemplate.update(
                 "delete from movie_images where id = ?;",
                 id
+        );
+    }
+
+    public Optional<MovieImage> findImageByMovieId(Long movieId) {
+        return Optional.ofNullable(
+                DataAccessUtils.singleResult(
+                        jdbcTemplate.query(
+                                """
+                                        select *
+                                        from movie_images
+                                        where movie_id = ?;
+                                        """,
+                                new BeanPropertyRowMapper<>(MovieImage.class),
+                                movieId
+                        )
+                )
         );
     }
 }
