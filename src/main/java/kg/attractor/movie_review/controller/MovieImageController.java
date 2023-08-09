@@ -23,4 +23,9 @@ public class MovieImageController {
         movieImageService.uploadImage(movieImageDto);
         return HttpStatus.OK;
     }
+
+    @GetMapping("{movieId}")
+    public ResponseEntity<?> getImageByMovie(@PathVariable Long movieId) {
+        return movieImageService.getImageByMovieId(movieId);
+    }
 }

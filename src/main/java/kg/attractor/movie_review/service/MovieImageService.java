@@ -36,4 +36,12 @@ public class MovieImageService {
         }
         return fileService.getOutputFile(fileName, SUB_DIR, MediaType.IMAGE_JPEG);
     }
+
+    public ResponseEntity<?> getImageByMovieId(Long movieId) {
+        var mayBeImage = movieImageDao.findImageByMovieId(movieId);
+        if (mayBeImage.isEmpty()) {
+            return fileService.getOutputFile("no_image.jpeg", SUB_DIR, MediaType.IMAGE_JPEG);
+        }
+        return fileService.getOutputFile(mayBeImage.get().getFileName(), SUB_DIR, MediaType.IMAGE_JPEG);
+    }
 }
