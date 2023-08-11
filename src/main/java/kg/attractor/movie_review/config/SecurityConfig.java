@@ -56,8 +56,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
-                .logout(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login")
+                        .defaultSuccessUrl("/")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .permitAll())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/add")).hasAuthority("FULL")
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/reviews/**")).fullyAuthenticated()

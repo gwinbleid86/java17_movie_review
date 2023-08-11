@@ -38,4 +38,15 @@ public class ReviewService {
                         .build())
                 .toList();
     }
+
+    public List<ReviewDto> getReviewsByMovieId(Long movieId) {
+        List<Review> reviews = reviewDao.getReviewsByMovieId(movieId);
+        return reviews.stream()
+                .map(e -> ReviewDto.builder()
+                        .rating(e.getRating())
+                        .comment(e.getComment())
+                        .reviewer(e.getReviewer())
+                        .build())
+                .toList();
+    }
 }

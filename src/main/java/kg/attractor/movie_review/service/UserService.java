@@ -22,8 +22,10 @@ public class UserService {
     public void createUser(UserDto userDto) {
         userDao.save(User.builder()
                 .email(userDto.getEmail())
+                .username(userDto.getUsername())
                 .password(encoder.encode(userDto.getPassword()))
                 .enabled(Boolean.TRUE)
                 .build());
+
     }
 }

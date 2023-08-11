@@ -20,6 +20,11 @@ public class ReviewController {
         return reviewService.getReviews();
     }
 
+    @GetMapping("{movieId}")
+    public List<ReviewDto> getReviewsByMovie(@PathVariable Long movieId) {
+        return reviewService.getReviewsByMovieId(movieId);
+    }
+
     @PostMapping
     public HttpStatus addReview(@RequestBody ReviewDto reviewDto, Authentication auth) {
         reviewService.addReview(reviewDto, auth);
