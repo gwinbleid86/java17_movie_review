@@ -2,6 +2,8 @@ package kg.attractor.movie_review.model;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -12,4 +14,5 @@ public class Review {
     private String comment;
     private String reviewer;
     private long movieId;
+    private LocalDateTime createTime;
 }

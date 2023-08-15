@@ -59,4 +59,11 @@ public class ReviewDao extends BaseDao {
                 id
         );
     }
+
+    public List<Review> getReviewsByMovieId(Long movieId) {
+        String sql = """
+                select * from review where movie_id = ?;
+                """;
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Review.class), movieId);
+    }
 }

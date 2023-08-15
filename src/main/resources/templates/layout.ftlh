@@ -18,6 +18,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
                 crossorigin="anonymous"></script>
+        <link href="../static/styles.css">
     </head>
 
     <body>
@@ -31,12 +32,29 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Books</a>
                 </li>
             </ul>
+
+            <#assign
+            known = SPRING_SECURITY_CONTEXT??
+            >
+            <#if known>
+                <#assign
+                user = SPRING_SECURITY_CONTEXT.authentication.principal
+                name = user.getUsername()
+                >
+                <input type="hidden" value="${name}" id="user">
+
+                <a href="/profile/${name}" class="text-light m-2 m-sm-0">Hi, ${name}</a>
+                <a href="/logout" class="btn btn-outline-info m-2">Logout</a>
+            <#else>
+                <a href="/auth/login" class="btn btn-outline-info m-2">SignIn</a>
+                <a href="/auth/register" class="btn btn-outline-info m-2">SignUp</a>
+            </#if>
             <#--            <a href="/profile" class="btn btn-outline-success my-2 my-sm-0">Profile</a>-->
             <#--            <#if user?has_content>-->
             <#--                <i class="btn btn-outline-success my-2 my-sm-0">${user.email}</i>-->
@@ -55,6 +73,9 @@
     <div class="container">
         <#nested>
     </div>
+
+
+    <#--    <script src="../static/main.js" type="text/javascript"></script>-->
     </body>
     </html>
 </#macro>

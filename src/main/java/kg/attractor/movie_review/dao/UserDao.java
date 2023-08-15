@@ -24,15 +24,25 @@ public class UserDao extends BaseDao {
     @Override
     public Long save(Object obj) {
         User u = (User) obj;
-        return (long) jdbcTemplate.update(
-                "insert into user_table(email, password, enabled) values (?, ?, ?)",
+        long rows = jdbcTemplate.update(
+                "insert into user_table(email, username, password, enabled) values (?, ?, ?, ?)",
                 u.getEmail(),
+                u.getUsername(),
                 u.getPassword(),
                 u.isEnabled()
         );
+        setRoleToNewUser(u.getEmail());
+        return rows;
     }
 
     @Override
     public void delete(Long id) {
+    }
+
+    public void setRoleToNewUser(String email) {
+        jdbcTemplate.update("""
+                        insert into roles(authority_id, user_email) values (?, ?);
+                        """,
+                2, email);
     }
 }
