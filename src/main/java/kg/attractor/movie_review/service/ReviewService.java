@@ -35,6 +35,7 @@ public class ReviewService {
                         .reviewer(e.getReviewer())
                         .rating(e.getRating())
                         .movieId(e.getMovieId())
+                        .createTime(e.getCreateTime())
                         .build())
                 .toList();
     }
@@ -46,6 +47,7 @@ public class ReviewService {
                         .rating(e.getRating())
                         .comment(e.getComment())
                         .reviewer(e.getReviewer())
+                        .createTime(e.getCreateTime())
                         .build())
                 .toList();
     }

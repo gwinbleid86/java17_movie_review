@@ -76,25 +76,11 @@
 
 
         window.addEventListener('load', async () => {
-
             setInterval(async () => {
-                let reviewBlock = document.getElementById('review_block')
                 let response = JSON.stringify(await getComments())
                 let review = JSON.parse(response)
-                console.log(review)
-                for (let reviewElement of review) {
-                    console.log(reviewElement)
-                    let element1 = document.createElement('p')
-                    let element2 = document.createElement('p')
-                    let element3 = document.createElement('p')
-                    element1.innerText = reviewElement.reviewer
-                    element2.innerText = reviewElement.rating
-                    element3.innerText = reviewElement.comment
-                    reviewBlock.append(element1)
-                    reviewBlock.append(element2)
-                    reviewBlock.append(element3)
-                }
-            })
+                fillBlock(review)
+            }, 10000)
         })
 
         async function getComments() {
@@ -106,6 +92,71 @@
                 }
             )
             return await response.json()
+        }
+
+        function fillBlock(review) {
+            let reviewBlock = document.getElementById('review_block')
+            let reviewHeaders = document.getElementsByClassName('review-card')
+            let lastElement = Array.from(reviewHeaders).pop()
+            for (let reviewElement of review) {
+                let lastReviewDateTime
+                let createTime = new Date(reviewElement.createTime)
+                if (!lastElement) {
+                    createBlock(reviewElement, reviewBlock);
+                } else {
+                    let value = lastElement.getElementsByTagName('i')[0].innerText
+                    lastReviewDateTime = new Date(value);
+                }
+
+                if (compareDates(createTime, lastReviewDateTime)) {
+                    createBlock(reviewElement, reviewBlock)
+                }
+            }
+        }
+
+        function compareDates(d1, d2) {
+            return d1.getTime() > d2.getTime()
+        }
+
+        function createBlock(reviewElement, reviewBlock) {
+            // <div class="card">
+            let card = document.createElement('div')
+            card.setAttribute('class', 'card my-3 review-card')
+
+            // <div class="card-header">
+            let cardHeader = document.createElement('div')
+            cardHeader.setAttribute('class', 'card-header')
+            cardHeader.innerText = reviewElement.reviewer
+
+            card.append(cardHeader)
+
+            // <div class="card-body">
+            let cardBody = document.createElement('div')
+            cardBody.setAttribute('class', 'card-body')
+
+            // <blockquote class="blockquote mb-0">
+            let blockquote = document.createElement('blockquote')
+            blockquote.setAttribute('class', 'blockquote mb-0')
+            cardBody.append(blockquote)
+            let p = document.createElement('p')
+            p.innerText = reviewElement.comment
+            cardBody.append(p)
+
+
+            //<footer class="blockquote-footer">
+            let footer = document.createElement('footer')
+            footer.setAttribute('class', 'blockquote-footer')
+            let dateTime = new Date(reviewElement.createTime)
+            let i = document.createElement('i')
+            i.setAttribute('style', 'display:none')
+            i.innerText = reviewElement.createTime
+            cardBody.append(i)
+            footer.innerText = dateTime.toString()
+            cardBody.append(footer)
+
+            card.append(cardBody)
+
+            reviewBlock.append(card)
         }
     </script>
 </@main.layout>
