@@ -13,7 +13,7 @@
                     <#--                            <strong>Invalid Login!</strong><br>Invalid username or password-->
                     <#--                        </div>-->
                     <#--                    </#if>-->
-                    <form action="/auth/login" method="post">
+                    <form action="/auth/login" method="post" id="login-form">
                         <!-- Email input -->
                         <div class="form-outline mb-4">
                             <input type="email" name="username" id="form1Example13"
@@ -56,5 +56,16 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            document.getElementById('login-form').addEventListener('submit', onLoginHandler)
+
+            function onLoginHandler(event) {
+                let form = event.target
+                let userFormData = new FormData(form)
+                let user = Object.fromEntries(userFormData)
+                saveUser(user)
+            }
+        </script>
     </section>
 </@main.layout>

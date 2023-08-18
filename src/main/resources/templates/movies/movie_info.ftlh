@@ -37,79 +37,74 @@
             </div>
             <button type="submit" class="btn btn-success">Success</button>
         </form>
+
+        <#list reviews as review>
+            <div class="card my-3 review-card">
+                <div class="card-header">
+                    ${review.reviewer}
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <p>${review.comment}</p>
+                        <footer class="blockquote-footer">
+                            ${review.createTime}
+                        </footer>
+                    </blockquote>
+                </div>
+            </div>
+        </#list>
     </div>
     <script>
-        const reviewForm = document.getElementById('review_form')
-        const baseUrl = 'http://localhost:8089'
-        const movieId = document.getElementById('movieId').getAttribute('value');
-
-        const user = {
-            email: 'qwe@qwe.qwe',
-            password: 'qwe'
-        }
-        const headers = new Headers()
-        headers.set('Authorization', 'Basic ' + btoa(user.email + ":" + user.password))
-        headers.set("Content-Type", "application/json")
-
         function reviewHandler(e) {
             e.preventDefault()
             let form = e.target
             let data = new FormData(form)
 
-
-            data.append('movieId', movieId)
-
+            data.append('movieId', ${movie.id})
 
             let json = JSON.stringify(Object.fromEntries(data))
 
-            fetch(
-                baseUrl + '/reviews',
-                {
-                    method: 'POST',
-                    headers: headers,
-                    body: json
-                }
-            )
+            try {
+                makeRequest(
+                    baseUrl + '/reviews',
+                    updateOptions({method: 'POST', body: json})
+                )
+            } catch (e) {
+                console.error(e)
+            }
         }
 
-        reviewForm.addEventListener('submit', reviewHandler)
-
+        document.getElementById('review_form')
+            .addEventListener('submit', reviewHandler)
 
         window.addEventListener('load', async () => {
             setInterval(async () => {
-                let response = JSON.stringify(await getComments())
+                let response = JSON.stringify(await makeRequest(
+                    baseUrl + '/reviews/${movie.id}'
+                ))
                 let review = JSON.parse(response)
                 fillBlock(review)
-            }, 10000)
+            }, 3000)
         })
-
-        async function getComments() {
-            let response = await fetch(
-                baseUrl + `/reviews/${movieId}`,
-                {
-                    method: 'GET',
-                    headers: headers
-                }
-            )
-            return await response.json()
-        }
 
         function fillBlock(review) {
             let reviewBlock = document.getElementById('review_block')
-            let reviewHeaders = document.getElementsByClassName('review-card')
-            let lastElement = Array.from(reviewHeaders).pop()
+            let reviewCard = document.getElementsByClassName('review-card')
+            let lastElement = Array.from(reviewCard).pop()
             for (let reviewElement of review) {
                 let lastReviewDateTime
                 let createTime = new Date(reviewElement.createTime)
-                if (!lastElement) {
-                    createBlock(reviewElement, reviewBlock);
+                if (lastElement) {
+                    let value = lastElement.getElementsByTagName('footer')[0].innerText
+                    lastReviewDateTime = new Date(value)
                 } else {
-                    let value = lastElement.getElementsByTagName('i')[0].innerText
-                    lastReviewDateTime = new Date(value);
+                    let date = new Date()
+                    lastReviewDateTime = date.setFullYear(date.getFullYear() - 1)
                 }
 
                 if (compareDates(createTime, lastReviewDateTime)) {
-                    createBlock(reviewElement, reviewBlock)
+                    let element = createBlock(reviewElement, reviewCard[0])
+                    reviewBlock.append(element)
                 }
             }
         }
@@ -118,45 +113,19 @@
             return d1.getTime() > d2.getTime()
         }
 
-        function createBlock(reviewElement, reviewBlock) {
-            // <div class="card">
-            let card = document.createElement('div')
-            card.setAttribute('class', 'card my-3 review-card')
+        function createBlock(reviewElement, node) {
+            let element = node.cloneNode(true)
 
-            // <div class="card-header">
-            let cardHeader = document.createElement('div')
-            cardHeader.setAttribute('class', 'card-header')
+            let cardHeader = element.getElementsByClassName('card-header')[0]
             cardHeader.innerText = reviewElement.reviewer
 
-            card.append(cardHeader)
-
-            // <div class="card-body">
-            let cardBody = document.createElement('div')
-            cardBody.setAttribute('class', 'card-body')
-
-            // <blockquote class="blockquote mb-0">
-            let blockquote = document.createElement('blockquote')
-            blockquote.setAttribute('class', 'blockquote mb-0')
-            cardBody.append(blockquote)
-            let p = document.createElement('p')
+            let p = element.getElementsByTagName('p')[0]
             p.innerText = reviewElement.comment
-            cardBody.append(p)
 
+            let footer = element.getElementsByTagName('footer')[0]
+            footer.innerText = reviewElement.createTime
 
-            //<footer class="blockquote-footer">
-            let footer = document.createElement('footer')
-            footer.setAttribute('class', 'blockquote-footer')
-            let dateTime = new Date(reviewElement.createTime)
-            let i = document.createElement('i')
-            i.setAttribute('style', 'display:none')
-            i.innerText = reviewElement.createTime
-            cardBody.append(i)
-            footer.innerText = dateTime.toString()
-            cardBody.append(footer)
-
-            card.append(cardBody)
-
-            reviewBlock.append(card)
+            return element
         }
     </script>
 </@main.layout>

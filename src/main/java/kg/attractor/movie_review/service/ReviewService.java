@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -16,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewDao reviewDao;
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss");
 
     public void addReview(ReviewDto reviewDto, Authentication auth) {
         User user = (User) auth.getPrincipal();
@@ -35,7 +38,7 @@ public class ReviewService {
                         .reviewer(e.getReviewer())
                         .rating(e.getRating())
                         .movieId(e.getMovieId())
-                        .createTime(e.getCreateTime())
+                        .createTime(e.getCreateTime().format(FORMATTER))
                         .build())
                 .toList();
     }
@@ -47,7 +50,7 @@ public class ReviewService {
                         .rating(e.getRating())
                         .comment(e.getComment())
                         .reviewer(e.getReviewer())
-                        .createTime(e.getCreateTime())
+                        .createTime(e.getCreateTime().format(FORMATTER))
                         .build())
                 .toList();
     }

@@ -5,6 +5,7 @@ import kg.attractor.movie_review.dto.DirectorDto;
 import kg.attractor.movie_review.dto.MovieDto;
 import kg.attractor.movie_review.dto.MovieMvcDto;
 import kg.attractor.movie_review.service.MovieService;
+import kg.attractor.movie_review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -17,18 +18,20 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class MovieMvcController {
-    private final MovieService service;
+    private final MovieService movieService;
+    private final ReviewService reviewService;
 
     @GetMapping
     public String getMovies(Model model) {
-        var movies = service.getMovies(0, 9, "id");
+        var movies = movieService.getMovies(0, 9, "id");
         model.addAttribute("movies", movies);
         return "movies/movies";
     }
 
     @GetMapping("/{movieId}")
     public String getMovie(@PathVariable Long movieId, Model model) {
-        model.addAttribute("movie", service.getMovieById(movieId));
+        model.addAttribute("movie", movieService.getMovieById(movieId));
+        model.addAttribute("reviews", reviewService.getReviewsByMovieId(movieId));
         return "movies/movie_info";
     }
 
@@ -45,7 +48,7 @@ public class MovieMvcController {
             MovieMvcDto movieDto,
             Authentication auth
     ) {
-        service.saveMovie(
+        movieService.saveMovie(
                 MovieDto.builder()
                         .name(movieDto.getName())
                         .releaseYear(movieDto.getReleaseYear())
