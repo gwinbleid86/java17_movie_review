@@ -18,7 +18,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
                 crossorigin="anonymous"></script>
-        <link href="../static/styles.css">
+        <link href="/static/styles.css">
+        <script type="text/javascript" src="/static/js/main.js"></script>
     </head>
 
     <body>
@@ -47,10 +48,8 @@
                 user = SPRING_SECURITY_CONTEXT.authentication.principal
                 name = user.getUsername()
                 >
-                <input type="hidden" value="${name}" id="user">
-
                 <a href="/profile/${name}" class="text-light m-2 m-sm-0">Hi, ${name}</a>
-                <a href="/logout" class="btn btn-outline-info m-2">Logout</a>
+                <a href="/logout" class="btn btn-outline-info m-2" id="logout">Logout</a>
             <#else>
                 <a href="/auth/login" class="btn btn-outline-info m-2">SignIn</a>
                 <a href="/auth/register" class="btn btn-outline-info m-2">SignUp</a>
@@ -75,7 +74,12 @@
     </div>
 
 
-    <#--    <script src="../static/main.js" type="text/javascript"></script>-->
+    <script>
+        let logout = document.getElementById('logout')
+        if (logout) {
+            logout.addEventListener('click', () => localStorage.removeItem('user'))
+        }
+    </script>
     </body>
     </html>
 </#macro>
