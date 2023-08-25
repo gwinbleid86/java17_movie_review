@@ -1,5 +1,11 @@
 <#import "../layout.ftlh" as main>
+<#import "/spring.ftl" as spring>
 <@main.layout>
+    <style>
+        form b {
+            color: red;
+        }
+    </style>
     <section class="vh-100" style="background-color: #eee;">
         <div class="container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -34,8 +40,10 @@
                                         <div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
-                                                <input type="password" name="password" id="form3Example4c"
-                                                       class="form-control"/>
+                                                <@spring.formInput "userDto.password" 'id="form3Example4c" class="form-control"'/>
+                                                <@spring.showErrors "<br>"/>
+                                                <#--                                                <input type="password" name="password" id="form3Example4c"-->
+                                                <#--                                                       class="form-control"/>-->
                                                 <label class="form-label" for="form3Example4c">Password</label>
                                             </div>
                                         </div>
