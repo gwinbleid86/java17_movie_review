@@ -5,12 +5,14 @@ import kg.attractor.movie_review.dto.UserDto;
 import kg.attractor.movie_review.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @Controller
@@ -26,8 +28,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-//    @ResponseStatus(code = HttpStatus.SEE_OTHER)
-    public String register(@Valid UserDto userDto, Model model, BindingResult bindingResult) {
+    @ResponseStatus(code = HttpStatus.SEE_OTHER)
+    public String register(@Valid UserDto userDto, BindingResult bindingResult, Model model) {
         if (!bindingResult.hasErrors()) {
             userService.createUser(userDto);
             return "redirect:/";

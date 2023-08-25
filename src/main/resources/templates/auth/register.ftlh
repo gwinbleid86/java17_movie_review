@@ -18,7 +18,6 @@
                                     <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
 
                                     <form class="mx-1 mx-md-4" action="/auth/register" method="post">
-
                                         <div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
@@ -40,11 +39,11 @@
                                         <div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
+                                                <label class="form-label" for="form3Example4c">Password</label>
                                                 <@spring.formInput "userDto.password" 'id="form3Example4c" class="form-control"'/>
                                                 <@spring.showErrors "<br>"/>
                                                 <#--                                                <input type="password" name="password" id="form3Example4c"-->
                                                 <#--                                                       class="form-control"/>-->
-                                                <label class="form-label" for="form3Example4c">Password</label>
                                             </div>
                                         </div>
 
