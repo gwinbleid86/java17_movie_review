@@ -24,7 +24,7 @@ public enum SortMovieListStrategy {
     BY_DIRECTOR_NAME("by_director") {
         @Override
         public List<Movie> sortingMovies(List<Movie> movies) {
-            movies.sort(Comparator.comparing(Movie::getDirectorId));
+            movies.sort(Comparator.comparing(e -> e.getDirector().getId()));
             return movies;
         }
     },
