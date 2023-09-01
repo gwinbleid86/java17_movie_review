@@ -7,10 +7,14 @@ import kg.attractor.movie_review.repository.ReviewRepository;
 import kg.attractor.movie_review.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -49,8 +53,20 @@ public class ReviewService {
                 .toList();
     }
 
-    public List<ReviewDto> getReviewsByMovieId(Long movieId) {
-        List<Review> reviews = reviewRepository.findAllByMovie_Id(movieId);
+    @Transactional
+    public List<ReviewDto> getReviewsByMovieId(Long movieId, String sortCriteria, int page, int size) {
+//        Sort s1 = Sort.by(Sort.Order.asc("reviewer"), Sort.Order.asc("rating"));
+//        Sort s2 = Sort.by(Sort.Order.asc("reviewer"), Sort.Order.desc("rating"));
+
+//        Sort sort = Sort.by(sortCriteria);
+
+//        int page = 1;
+//        int count = 3;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortCriteria));
+//        Page<Review> pageRequest = reviewRepository.findAll(pageable);
+
+
+        List<Review> reviews = reviewRepository.findByMovieId(movieId, pageable);
         return reviews.stream()
                 .map(e -> ReviewDto.builder()
                         .rating(e.getRating())

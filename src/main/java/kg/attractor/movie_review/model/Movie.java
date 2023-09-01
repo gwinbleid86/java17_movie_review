@@ -3,6 +3,8 @@ package kg.attractor.movie_review.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -28,9 +30,9 @@ public class Movie {
     @PrimaryKeyJoinColumn
     private MovieImage movieImage;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
-//    private List<MovieCastMember> movieCastMembers;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
+    private List<MovieCastMember> movieCastMembers;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
-//    List<Review> reviews;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie")
+    List<Review> reviews;
 }

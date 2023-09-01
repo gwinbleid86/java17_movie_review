@@ -1,9 +1,9 @@
 package kg.attractor.movie_review.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,6 +22,6 @@ public class User {
 
     private boolean enabled;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user_table")
-//    private List<Review> reviews;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reviewer")
+    private List<Review> reviews;
 }

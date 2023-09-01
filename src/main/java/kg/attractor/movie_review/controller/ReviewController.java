@@ -22,7 +22,7 @@ public class ReviewController {
 
     @GetMapping("{movieId}")
     public List<ReviewDto> getReviewsByMovie(@PathVariable Long movieId) {
-        return reviewService.getReviewsByMovieId(movieId);
+        return reviewService.getReviewsByMovieId(movieId, "createTime", 0, 200);
     }
 
     @PostMapping

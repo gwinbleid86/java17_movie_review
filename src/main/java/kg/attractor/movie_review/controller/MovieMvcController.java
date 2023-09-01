@@ -29,9 +29,14 @@ public class MovieMvcController {
     }
 
     @GetMapping("/{movieId}")
-    public String getMovie(@PathVariable Long movieId, Model model) {
+    public String getMovie(
+            @PathVariable Long movieId,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") int size,
+            Model model
+    ) {
         model.addAttribute("movie", movieService.getMovieDtoById(movieId));
-        model.addAttribute("reviews", reviewService.getReviewsByMovieId(movieId));
+        model.addAttribute("reviews", reviewService.getReviewsByMovieId(movieId, "createTime", page, size));
         return "movies/movie_info";
     }
 
