@@ -3,6 +3,8 @@ package kg.attractor.movie_review.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -18,6 +20,6 @@ public class Director {
     @Column(name = "fullname")
     private String fullName; // full_name
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "director")
-//    List<Movie> movies;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "director")
+    List<Movie> movies;
 }
