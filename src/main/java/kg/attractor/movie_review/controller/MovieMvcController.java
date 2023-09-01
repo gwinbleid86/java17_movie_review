@@ -30,7 +30,7 @@ public class MovieMvcController {
 
     @GetMapping("/{movieId}")
     public String getMovie(@PathVariable Long movieId, Model model) {
-        model.addAttribute("movie", movieService.getMovieById(movieId));
+        model.addAttribute("movie", movieService.getMovieDtoById(movieId));
         model.addAttribute("reviews", reviewService.getReviewsByMovieId(movieId));
         return "movies/movie_info";
     }

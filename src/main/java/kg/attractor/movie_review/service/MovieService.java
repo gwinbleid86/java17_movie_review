@@ -1,6 +1,5 @@
 package kg.attractor.movie_review.service;
 
-import kg.attractor.movie_review.dao.MovieDao;
 import kg.attractor.movie_review.dto.DirectorDto;
 import kg.attractor.movie_review.dto.MovieDto;
 import kg.attractor.movie_review.enums.SortMovieListStrategy;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -28,7 +28,6 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MovieService {
     MovieRepository repository;
-    MovieDao movieDao;
     DirectorService directorService;
     CastMemberService castMemberService;
     MovieCastMemberService movieCastMemberService;
@@ -72,7 +71,7 @@ public class MovieService {
     }
 
     public ResponseEntity<?> getMovieByName(String name) {
-        Optional<Movie> mayBeMovie = movieDao.findMovieByName(name);
+        Optional<Movie> mayBeMovie = repository.findMovieByName(name);
         if (mayBeMovie.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -81,9 +80,13 @@ public class MovieService {
     }
 
     public ResponseEntity<?> sortedListMovies(String sortedCriteria) {
-        List<Movie> movies = movieDao.getMovies();
+        List<Movie> movies = StreamSupport.stream(
+                repository.findAll(Sort.by(Sort.Direction.DESC, sortedCriteria)).spliterator(),
+                false
+        ).toList();
         return new ResponseEntity<>(
-                sortMovies(movies, sortedCriteria),
+//                sortMovies(movies, sortedCriteria),
+                movies,
                 HttpStatus.OK
         );
     }
@@ -100,7 +103,7 @@ public class MovieService {
             return ResponseEntity.notFound().build();
         }
 
-        var movies = movieDao.findMoviesByCastMemberId(mayBeMember.get().getId());
+        List<Movie> movies = repository.findByMovieCastMembersCastMemberId(mayBeMember.get().getId());
 
         return new ResponseEntity<>(
                 movies.stream()
@@ -112,7 +115,7 @@ public class MovieService {
 
 
     private MovieDto makeMovieDtoFromMovie(Movie movie) {
-        var director = directorService.findDirectorById(movie.getDirectorId());
+        var director = directorService.findDirectorById(movie.getDirector().getId());
         var directorDto = new DirectorDto();
         if (director.isPresent()) {
             directorDto = DirectorDto.builder()
@@ -142,17 +145,19 @@ public class MovieService {
             directorId = directorService.save(movieDto.getDirector());
         }
 
-        var mayBeMovie = movieDao.findMovieByName(movieDto.getName());
+        var mayBeMovie = repository.findMovieByName(movieDto.getName());
         long movieId;
         if (mayBeMovie.isPresent()) {
             movieId = mayBeMovie.get().getId();
         } else {
-            movieId = movieDao.save(Movie.builder()
-                    .name(movieDto.getName())
-                    .releaseYear(movieDto.getReleaseYear())
-                    .description(movieDto.getDescription())
-                    .directorId(directorId)
-                    .build());
+            movieId = repository.save(Movie.builder()
+                            .name(movieDto.getName())
+                            .releaseYear(movieDto.getReleaseYear())
+                            .description(movieDto.getDescription())
+                            .director(directorService.findDirectorById(directorId)
+                                    .orElseThrow(() -> new NoSuchElementException("Not found Director")))
+                            .build())
+                    .getId();
         }
 
         movieDto.getCastMembers().forEach(e -> {
@@ -165,20 +170,20 @@ public class MovieService {
             }
 
             movieCastMemberService.save(MovieCastMember.builder()
-                    .movieId(movieId)
-                    .castMemberId(castMemberId)
+                    .movie(repository.findById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found")))
+                    .castMember(castMemberService.getById(castMemberId))
                     .role(e.getRole())
                     .build());
         });
     }
 
     public void delete(Long id) {
-        movieDao.delete(id);
+        repository.delete(repository.findById(id).orElseThrow(() -> new NoSuchElementException("Movie not found")));
     }
 
-    public MovieDto getMovieById(Long movieId) {
-        var movie = movieDao.findMovieById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
-        var director = directorService.findDirectorById(movie.getDirectorId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
+    public MovieDto getMovieDtoById(Long movieId) {
+        var movie = repository.findById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
+        var director = directorService.findDirectorById(movie.getDirector().getId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
         var castMembers = castMemberService.getCastMembersByMovieId(movie.getId());
         castMembers.forEach(e -> e.setRole(
                 movieCastMemberService.findRoleByMovieIdAndCastMemberId(movie.getId(), e.getId())
@@ -199,7 +204,7 @@ public class MovieService {
     public ResponseEntity<?> search(String movieId, String movieName, String castMemberName) {
         // movie_name, cast_member_name, movie_id
         if (movieId != null && !movieId.isBlank()) {
-            return new ResponseEntity<>(getMovieById(Long.valueOf(movieId)), HttpStatus.OK);
+            return new ResponseEntity<>(getMovieDtoById(Long.valueOf(movieId)), HttpStatus.OK);
         }
 
         if (castMemberName != null && !castMemberName.isBlank()) {
@@ -211,5 +216,9 @@ public class MovieService {
         }
 
         throw new NoSuchElementException("Movie not found");
+    }
+
+    public Movie getMovieById(Long movieId) {
+        return repository.findById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
     }
 }

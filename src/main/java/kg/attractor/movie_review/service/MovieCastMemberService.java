@@ -1,29 +1,27 @@
 package kg.attractor.movie_review.service;
 
-import kg.attractor.movie_review.dao.MovieCastMemberDao;
 import kg.attractor.movie_review.model.MovieCastMember;
+import kg.attractor.movie_review.repository.MovieCastMemberRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MovieCastMemberService {
-    MovieCastMemberDao movieCastMemberDao;
+
+    MovieCastMemberRepository repository;
 
     public long save(MovieCastMember movieCastMember) {
-        return movieCastMemberDao.save(movieCastMember);
+        return repository.save(movieCastMember).getId();
     }
 
     public String findRoleByMovieIdAndCastMemberId(Long movieId, Long castMemberId) {
-        return movieCastMemberDao.findByMovieIdAndCastMemberId(
+        return repository.findRoleByMovieIdAndCastMemberId(
                 movieId,
-                castMemberId).orElseThrow(() -> new NoSuchElementException("Role not found")
-        );
+                castMemberId);
     }
 
 }
