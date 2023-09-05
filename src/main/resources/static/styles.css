@@ -5,3 +5,7 @@
     height: 1px;
     background: #eee;
 }
+
+.error {
+    color: red;
+}

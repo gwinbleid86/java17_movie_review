@@ -84,7 +84,7 @@
                 ))
                 let review = JSON.parse(response)
                 fillBlock(review)
-            }, 3000)
+            }, 10000)
         })
 
         function fillBlock(review) {

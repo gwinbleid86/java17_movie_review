@@ -75,6 +75,13 @@
             tableName: movie_cast_member
             columns:
               - column:
+                  name: id
+                  type: long
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
                   name: movie_id
                   type: long
                   constraints:

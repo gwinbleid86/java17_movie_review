@@ -14,6 +14,9 @@
                     <#--                        </div>-->
                     <#--                    </#if>-->
                     <form action="/auth/login" method="post" id="login-form">
+                        <#if error??>
+                            <b class="error">${error}</b>
+                        </#if>
                         <!-- Email input -->
                         <div class="form-outline mb-4">
                             <input type="email" name="username" id="form1Example13"
