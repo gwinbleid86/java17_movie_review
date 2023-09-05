@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
@@ -39,8 +36,15 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(
+            @RequestParam(defaultValue = "false", required = false) Boolean error,
+            Model model
+    ) {
+        if (error.equals(Boolean.TRUE)) {
+            model.addAttribute("error", "Invalid Username or Password");
+        }
         return "/auth/login";
     }
+
 
 }
