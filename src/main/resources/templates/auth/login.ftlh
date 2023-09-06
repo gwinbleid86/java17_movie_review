@@ -14,6 +14,11 @@
                     <#--                        </div>-->
                     <#--                    </#if>-->
                     <form action="/auth/login" method="post" id="login-form">
+                        <#if _csrf??>
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                   value="${(_csrf.token)!'csrf-token'}"/>
+                        </#if>
+
                         <#if error??>
                             <b class="error">${error}</b>
                         </#if>
