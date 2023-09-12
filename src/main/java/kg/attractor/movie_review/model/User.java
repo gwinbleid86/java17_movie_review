@@ -23,6 +23,8 @@ public class User {
 
     private boolean enabled;
 
+    private String resetPasswordToken;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reviewer")
     private List<Review> reviews;
 
