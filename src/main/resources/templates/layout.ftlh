@@ -1,3 +1,4 @@
+<#import "spring.ftl" as spring>
 <#macro layout>
 
     <!DOCTYPE html>
@@ -9,79 +10,79 @@
               name="viewport">
         <meta content="ie=edge" http-equiv="X-UA-Compatible">
         <title>Http server Index page</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-              integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-              crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-                integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
-                crossorigin="anonymous"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="/static/styles.css">
         <script type="text/javascript" src="/static/js/main.js"></script>
     </head>
 
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><@spring.message 'navbar.logo'/></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Books</a>
-                </li>
-            </ul>
-
-            <#assign
-            known = SPRING_SECURITY_CONTEXT??
-            >
-            <#if known>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><@spring.message 'navbar.navi.home'/></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><@spring.message 'navbar.navi.books'/></a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="flag-united-kingdom flag m-0"></i>
+                        <@spring.message 'navbar.navi.lang'/>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+                        <li><a class="dropdown-item" href="?lang=ru">Русский</a></li>
+                    </ul>
+                </div>
                 <#assign
-                user = SPRING_SECURITY_CONTEXT.authentication.principal
-                name = user.getUsername()
+                known = SPRING_SECURITY_CONTEXT??
                 >
-                <a href="/profile/${name}" class="text-light m-2 m-sm-0">Hi, ${name}</a>
+                <#if known>
+                    <#assign
+                    user = SPRING_SECURITY_CONTEXT.authentication.principal
+                    name = user.getUsername()
+                    >
+                    <a href="/profile/${name}"
+                       class="text-light m-2 m-sm-0"><@spring.message 'navbar.user.hi'/> ${name}</a>
 
 
-                <#if _csrf??>
-                    <form action="/logout" method="post">
-                        <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
-                               value="${(_csrf.token)!'--no-token--'}"/>
-                        <button type="submit" class="btn btn-outline-info m-2" id="logout">Logout</button>
-                    </form>
+                    <#if _csrf??>
+                        <form action="/logout" method="post">
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf'}"
+                                   value="${(_csrf.token)!'--no-token--'}"/>
+                            <button type="submit" class="btn btn-outline-info m-2"
+                                    id="logout"><@spring.message 'navbar.user.logout'/></button>
+                        </form>
+                    <#else>
+                        <a href="/logout" class="btn btn-outline-info m-2"
+                           id="logout"><@spring.message 'navbar.user.logout'/></a>
+                    </#if>
+
                 <#else>
-                    <a href="/logout" class="btn btn-outline-info m-2" id="logout">Logout</a>
+                    <a href="/auth/login"
+                       class="btn btn-outline-info m-2"><@spring.message 'navbar.user.signin'/></a>
+                    <a href="/auth/register"
+                       class="btn btn-outline-info m-2"><@spring.message 'navbar.user.signup'/></a>
                 </#if>
-
-            <#else>
-                <a href="/auth/login" class="btn btn-outline-info m-2">SignIn</a>
-                <a href="/auth/register" class="btn btn-outline-info m-2">SignUp</a>
-            </#if>
-            <#--            <a href="/profile" class="btn btn-outline-success my-2 my-sm-0">Profile</a>-->
-            <#--            <#if user?has_content>-->
-            <#--                <i class="btn btn-outline-success my-2 my-sm-0">${user.email}</i>-->
-            <#--            <#else>-->
-            <#--                <a href="/login" class="btn btn-outline-success my-2 my-sm-0">LogIn</a>-->
-            <#--            </#if>-->
-            <#--            <#if user?has_content>-->
-            <#--                <i></i>-->
-            <#--            <#else>-->
-            <#--                <a href="/register" class="btn btn-outline-success my-2 my-sm-0">Sign up</a>-->
-            <#--            </#if>-->
-            <#--            <a href="/exit" class="btn btn-outline-success my-2 my-sm-0">Exit</a>-->
+                <#--                </div>-->
+            </div>
         </div>
     </nav>
     <i class="m-5"></i>
     <div class="container">
-        <#nested>
+        <#nested spring>
     </div>
 
 
