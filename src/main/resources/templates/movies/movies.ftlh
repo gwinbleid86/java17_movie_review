@@ -1,5 +1,6 @@
+<#--<#import "spring.ftl" as spring>-->
 <#import "../layout.ftlh" as main>
-<@main.layout>
+<@main.layout ; spring>
 
     <div class="row justify-content-around">
         <#list movies.content as movie>
@@ -8,13 +9,13 @@
                 <div class="card-body">
                     <h5 class="card-title">${movie.name}</h5>
                     <p class="card-text">${movie.description}</p>
-                    <a href="/${movie.id}" class="btn btn-primary">More info</a>
+                    <a href="/${movie.id}" class="btn btn-primary"><@spring.message 'main.item.info'/></a>
 
                 </div>
             </div>
         </#list>
     </div>
 
-    <a href="/add" class="btn btn-success">Create new movie</a>
+    <a href="/add" class="btn btn-success"><@spring.message 'main.newItem'/></a>
 
 </@main.layout>

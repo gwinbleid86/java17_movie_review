@@ -15,7 +15,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-//    private static final String FETCH_USERS_QUERY = """
+    //    private static final String FETCH_USERS_QUERY = """
 //            select email, password, enabled
 //            from user_table
 //            where email = ?;
@@ -40,10 +40,10 @@ public class SecurityConfig {
 //                .authoritiesByUsernameQuery(FETCH_AUTHORITIES_QUERY)
 //                .passwordEncoder(new BCryptPasswordEncoder());
 //    }
-@Bean
-public PasswordEncoder encoder() {
-    return new BCryptPasswordEncoder();
-}
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -65,7 +65,10 @@ public PasswordEncoder encoder() {
                         .requestMatchers("/add").hasRole("ADMIN")
                         .requestMatchers("/reviews/**").fullyAuthenticated()
                         .anyRequest().permitAll()
-                );
+                )
+                .rememberMe(customizer -> customizer
+                        .key("secret")
+                        .tokenValiditySeconds(60));
         return http.build();
     }
 }
