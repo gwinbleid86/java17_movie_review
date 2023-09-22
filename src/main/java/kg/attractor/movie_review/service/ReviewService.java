@@ -2,7 +2,6 @@ package kg.attractor.movie_review.service;
 
 import kg.attractor.movie_review.dto.ReviewDto;
 import kg.attractor.movie_review.model.Review;
-import kg.attractor.movie_review.model.User;
 import kg.attractor.movie_review.repository.MovieRepository;
 import kg.attractor.movie_review.repository.ReviewRepository;
 import kg.attractor.movie_review.repository.UserRepository;
@@ -12,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

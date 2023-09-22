@@ -3,17 +3,23 @@ package kg.attractor.movie_review.service;
 import kg.attractor.movie_review.model.Authority;
 import kg.attractor.movie_review.model.Role;
 import kg.attractor.movie_review.model.User;
+import kg.attractor.movie_review.repository.RoleRepository;
 import kg.attractor.movie_review.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -22,7 +28,9 @@ public class AuthUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-//    private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
+
+    private final RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -72,5 +80,23 @@ public class AuthUserDetailsService implements UserDetailsService {
         return privileges;
     }
 
+    public void processOAuthPostLogin(String username) {
+        var existUser = userRepository.getByEmail(username);
+
+        if (existUser.isEmpty()) {
+            var user = User.builder()
+                    .email(username)
+                    .password(encoder.encode("qwerty"))
+                    .roles(new HashSet<>())
+                    .enabled(Boolean.TRUE)
+                    .build();
+            user.addRole(roleRepository.findByRole("ROLE_USER"));
+            userRepository.saveAndFlush(user);
+        }
+
+        UserDetails userDetails = loadUserByUsername(username);
+        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
 }

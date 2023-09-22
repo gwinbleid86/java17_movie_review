@@ -10,14 +10,18 @@ function readUser() {
 
 const baseUrl = 'http://localhost:8089'
 
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+const csrfToken = document.querySelector('meta[name="_csrf_token"]').getAttribute('content');
+
 function makeHeaders() {
-    let headers = new Headers()
-    let user = readUser()
-    headers.set('Content-Type', 'application/json')
-    if (user) {
-        headers.set('Authorization', 'Basic ' + btoa(user.username + ":" + user.password))
-    }
-    return headers
+    let headers = new Headers();
+    // let user = readUser();
+    headers.set('Content-Type', 'application/json');
+    headers.set(csrfHeader, csrfToken);
+    // if (user) {
+    //     headers.set('Authorization', 'Basic ' + btoa(user.username + ":" + user.password));
+    // }
+    return headers;
 }
 
 const requestSettings = {

@@ -28,6 +28,19 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reviewer")
     private List<Review> reviews;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users", cascade = CascadeType.ALL)
     private Collection<Role> roles;
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(long roleId) {
+        Role role = this.roles.stream().filter(t -> t.getId() == roleId).findFirst().orElse(null);
+        if (role != null) {
+            this.roles.remove(role);
+            role.getUsers().remove(this);
+        }
+    }
 }
