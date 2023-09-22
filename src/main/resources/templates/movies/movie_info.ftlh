@@ -21,6 +21,10 @@
 
     <div id="review_block">
         <form id="review_form">
+            <#if _csrf??>
+                <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                       value="${(_csrf.token)!'csrf-token'}"/>
+            </#if>
             <div class="form-group">
                 <label for="rating">Rating</label>
                 <select class="form-control" id="rating" name="rating">
@@ -55,6 +59,7 @@
         </#list>
     </div>
     <script>
+
         function reviewHandler(e) {
             e.preventDefault()
             let form = e.target

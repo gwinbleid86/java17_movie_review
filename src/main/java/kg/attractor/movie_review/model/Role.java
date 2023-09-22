@@ -19,7 +19,7 @@ public class Role {
 
     private String role;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -27,7 +27,7 @@ public class Role {
     )
     private Collection<User> users;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "roles_authorities",
             joinColumns = @JoinColumn(name = "role_id"),

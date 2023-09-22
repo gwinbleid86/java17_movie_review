@@ -9,6 +9,8 @@
         <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
               name="viewport">
         <meta content="ie=edge" http-equiv="X-UA-Compatible">
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
+        <meta name="_csrf_token" content="${_csrf.token}"/>
         <title>Http server Index page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

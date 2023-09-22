@@ -1,13 +1,15 @@
 package kg.attractor.movie_review.config;
 
+import kg.attractor.movie_review.model.CustomOAuth2User;
+import kg.attractor.movie_review.service.AuthUserDetailsService;
+import kg.attractor.movie_review.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -15,42 +17,15 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    //    private static final String FETCH_USERS_QUERY = """
-//            select email, password, enabled
-//            from user_table
-//            where email = ?;
-//            """;
-//
-//    private static final String FETCH_AUTHORITIES_QUERY = """
-//            select user_email, authority
-//             from roles r,
-//                  authorities a
-//             where user_email = ?
-//             and r.authority_id = a.id;
-//            """;
-//
-//
-//    private final DataSource dataSource;
-//
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .usersByUsernameQuery(FETCH_USERS_QUERY)
-//                .authoritiesByUsernameQuery(FETCH_AUTHORITIES_QUERY)
-//                .passwordEncoder(new BCryptPasswordEncoder());
-//    }
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+
+    private final AuthUserDetailsService userDetailsService;
+
+    private final CustomOAuth2UserService oAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // delete code
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
                         .loginPage("/auth/login")
@@ -68,7 +43,16 @@ public class SecurityConfig {
                 )
                 .rememberMe(customizer -> customizer
                         .key("secret")
-                        .tokenValiditySeconds(60));
+                        .tokenValiditySeconds(60))
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/auth/login")
+                        .userInfoEndpoint(config -> config
+                                .userService(oAuth2UserService))
+                        .successHandler((request, response, authentication) -> {
+                            CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+                            userDetailsService.processOAuthPostLogin(user.getAttribute("email"));
+                            response.sendRedirect("/");
+                        }));
         return http.build();
     }
 }

@@ -1,0 +1,55 @@
+server:
+  port: 8089
+
+spring:
+  datasource:
+    url: jdbc:h2:./db/movie_review;AUTO_SERVER=TRUE
+    username: root
+    password: qwerty
+    driver-class-name: org.h2.Driver
+
+  liquibase.change-log: classpath:/db/changelog/master.yaml
+  freemarker:
+    expose-session-attributes: true
+  mvc:
+    static-path-pattern: /static/**
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  #spring.h2.console.enabled=true
+
+  #============ Mail config
+  mail:
+    host: smtp.gmail.com
+    username: gwinbleid86@gmail.com
+    password: hdkbbowfqpidyvfc
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  #============ Google config
+  #  spring.security.oauth2.client.registration.google.client-id=[client_id]
+  #  spring.security.oauth2.client.registration.google.client-secret=[secret_key]
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 108420276704-l5ok4c05k4llt8l5ar131sq221ro7bni.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - email
+              - profile
+
+
+logging:
+  file:
+    path: logs
+  level:
+    org:
+      springframework:
+        security: DEBUG

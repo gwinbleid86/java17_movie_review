@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import kg.attractor.movie_review.dto.UserDto;
 import kg.attractor.movie_review.model.User;
+import kg.attractor.movie_review.repository.RoleRepository;
 import kg.attractor.movie_review.repository.UserRepository;
 import kg.attractor.movie_review.util.Utility;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository repository;
+
+    private final RoleRepository roleRepository;
+
     private final PasswordEncoder encoder;
 
     private final EmailService emailService;
@@ -28,13 +34,15 @@ public class UserService {
     }
 
     public void createUser(UserDto userDto) {
-        repository.save(User.builder()
+        var user = User.builder()
                 .email(userDto.getEmail())
-                .username(userDto.getUsername())
                 .password(encoder.encode(userDto.getPassword()))
+                .username(userDto.getUsername())
+                .roles(new HashSet<>())
                 .enabled(Boolean.TRUE)
-                .build());
-
+                .build();
+        user.addRole(roleRepository.findByRole("ROLE_USER"));
+        repository.saveAndFlush(user);
     }
 
     private void updateResetPasswordToken(String token, String email) {
