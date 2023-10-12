@@ -1,13 +1,12 @@
 package kg.attractor.movie_review;
 
-import org.junit.jupiter.api.Test;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MovieReviewApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
+@RunWith(Cucumber.class)
+@CucumberOptions(plugin = {"pretty"})
+public class MovieReviewApplicationTests {
 }

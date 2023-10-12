@@ -1,10 +1,14 @@
 package kg.attractor.movie_review.service;
 
+import kg.attractor.movie_review.dto.CastMemberDto;
 import kg.attractor.movie_review.dto.DirectorDto;
 import kg.attractor.movie_review.dto.MovieDto;
 import kg.attractor.movie_review.enums.SortMovieListStrategy;
 import kg.attractor.movie_review.model.Movie;
 import kg.attractor.movie_review.model.MovieCastMember;
+import kg.attractor.movie_review.repository.CastMemberRepository;
+import kg.attractor.movie_review.repository.DirectorRepository;
+import kg.attractor.movie_review.repository.MovieCastMemberRepository;
 import kg.attractor.movie_review.repository.MovieRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +33,11 @@ import java.util.stream.StreamSupport;
 public class MovieService {
     MovieRepository repository;
     DirectorService directorService;
+    DirectorRepository directorRepository;
     CastMemberService castMemberService;
+    CastMemberRepository castMemberRepository;
     MovieCastMemberService movieCastMemberService;
+    MovieCastMemberRepository movieCastMemberRepository;
 
     public Page<MovieDto> getMovies(int page, int size, String sort) {
 //        List<Movie> movies = movieDao.getMovies();
@@ -183,8 +190,16 @@ public class MovieService {
 
     public MovieDto getMovieDtoById(Long movieId) {
         var movie = repository.findById(movieId).orElseThrow(() -> new NoSuchElementException("Movie not found"));
-        var director = directorService.findDirectorById(movie.getDirector().getId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
-        var castMembers = castMemberService.getCastMembersByMovieId(movie.getId());
+//        var director = directorService.findDirectorById(movie.getDirector().getId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
+        var director = directorRepository.findById(movie.getDirector().getId()).orElseThrow(() -> new NoSuchElementException("Director not found"));
+//        var castMembers = castMemberService.getCastMembersByMovieId(movie.getId());
+        var castMembers = castMemberRepository.findByMovieId(movie.getId()).stream()
+                .map(e -> CastMemberDto.builder()
+                        .id(e.getId())
+                        .fullName(e.getFullName())
+                        .build()
+                )
+                .toList();
         castMembers.forEach(e -> e.setRole(
                 movieCastMemberService.findRoleByMovieIdAndCastMemberId(movie.getId(), e.getId())
         ));
