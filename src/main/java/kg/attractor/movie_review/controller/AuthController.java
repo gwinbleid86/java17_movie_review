@@ -23,6 +23,9 @@ import java.io.UnsupportedEncodingException;
 public class AuthController {
     private final UserService userService;
 
+    /**
+     * test
+     */
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("userDto", new UserDto());
@@ -102,7 +105,7 @@ public class AuthController {
 //
 //    @GetMapping("/show")
 //    public String showNames(@SessionAttribute Optional<String> name) {
-//        // TODO что-то делаем с коллекцией
+//         TODO что-то делаем с коллекцией
 //        return "sample";
 //    }
 }

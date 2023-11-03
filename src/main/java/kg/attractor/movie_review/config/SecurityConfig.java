@@ -3,6 +3,7 @@ package kg.attractor.movie_review.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,31 +16,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    //    private static final String FETCH_USERS_QUERY = """
-//            select email, password, enabled
-//            from user_table
-//            where email = ?;
-//            """;
-//
-//    private static final String FETCH_AUTHORITIES_QUERY = """
-//            select user_email, authority
-//             from roles r,
-//                  authorities a
-//             where user_email = ?
-//             and r.authority_id = a.id;
-//            """;
-//
-//
-//    private final DataSource dataSource;
-//
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .usersByUsernameQuery(FETCH_USERS_QUERY)
-//                .authoritiesByUsernameQuery(FETCH_AUTHORITIES_QUERY)
-//                .passwordEncoder(new BCryptPasswordEncoder());
-//    }
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -48,9 +24,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // delete code
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
                         .loginPage("/auth/login")
@@ -63,7 +36,7 @@ public class SecurityConfig {
                         .permitAll())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/add").hasRole("ADMIN")
-                        .requestMatchers("/reviews/**").fullyAuthenticated()
+                        .requestMatchers(HttpMethod.POST, "/reviews/**").fullyAuthenticated()
                         .anyRequest().permitAll()
                 )
                 .rememberMe(customizer -> customizer
