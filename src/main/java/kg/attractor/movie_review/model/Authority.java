@@ -17,6 +17,6 @@ public class Authority {
 
     private String authority;
 
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "authorities", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<Role> roles;
 }
