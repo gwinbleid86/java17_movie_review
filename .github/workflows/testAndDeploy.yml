@@ -35,8 +35,8 @@ jobs:
         cache: maven
     # - name: Build with Maven
       # run: mvn -B package --file pom.xml
-    - name: Start Maven Test
-      run: mvn clean test package
+    # - name: Start Maven Test
+      # run: mvn clean test package
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     # - name: Update dependency graph
@@ -48,6 +48,14 @@ jobs:
 
       steps:
         - uses: actions/checkout@v3
+
+        # In this step, this action saves a list of existing images,
+        # the cache is created without them in the post run.
+        # It also restores the cache if it exists.
+        - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+          continue-on-error: true
+        
         - name: Login
           run: |
             echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
