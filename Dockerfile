@@ -6,7 +6,7 @@
 
 FROM openjdk:17-jdk-slim
 RUN mkdir /app
-COPY ../../../../../target/movie_review*jar /app/movie_review.jar
+ADD ./target/movie_review*jar /app/movie_review.jar
 WORKDIR /app
 
 #COPY --from=build /build/target/movie_review*jar ./movie_review.jar
