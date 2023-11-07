@@ -38,7 +38,7 @@ jobs:
     - name: Start Maven Test & Package
       run: mvn clean package
     - name: List directories
-      run: ls -lah
+      run: ls -lah && ls -lah /target
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     # - name: Update dependency graph
