@@ -65,7 +65,7 @@ jobs:
           name: movie_review.jar
 
       - name: List directories
-        run: pwd && ls -lah && ls -lah ./target
+        run: pwd && ls -lah
 
       - name: Login
         run: |
