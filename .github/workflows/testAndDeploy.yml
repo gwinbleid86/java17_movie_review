@@ -45,7 +45,7 @@ jobs:
         with:
           name: movie_review.jar
           path: ./target/movie_review*.jar
-          retention-minutes: 1
+          retention-days: 1
 
 
         # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
