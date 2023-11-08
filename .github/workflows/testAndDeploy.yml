@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: movie_review.jar
-          path: /target/movie_review*jar
+          path: ./target/movie_review*.jar
           retention-minutes: 1
 
 
