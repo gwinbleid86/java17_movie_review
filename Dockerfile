@@ -6,7 +6,6 @@
 
 FROM openjdk:17-jdk-slim
 RUN mkdir /app
-RUN pwd
 COPY ./movie_review*.jar ./app/movie_review.jar
 WORKDIR /app
 
