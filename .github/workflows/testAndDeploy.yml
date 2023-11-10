@@ -47,6 +47,7 @@ jobs:
           path: ./target/movie_review*.jar
           retention-days: 1
 
+
   publish:
     needs: build
     name: publish image
