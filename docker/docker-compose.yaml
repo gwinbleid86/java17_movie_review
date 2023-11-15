@@ -1,0 +1,17 @@
+networks:
+  movie_review:
+
+services:
+
+  app:
+    container_name: movie_review_container
+    image: movie_review_image:latest
+    restart: always
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./db:/app/db
+      - ./logs:/app/logs
+      - ./config:/app/config
+    networks:
+      movie_review:
