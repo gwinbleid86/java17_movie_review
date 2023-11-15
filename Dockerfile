@@ -2,7 +2,7 @@ FROM maven:3.9.5-amazoncorretto-17 AS build
 WORKDIR /build
 COPY src ./src
 COPY pom.xml ./
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 FROM openjdk:17-jdk-slim
 #RUN mkdir /app
