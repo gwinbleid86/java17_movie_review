@@ -4,12 +4,17 @@
 #COPY pom.xml ./
 #RUN mvn clean package -DskipTests
 
+#FROM openjdk:17-jdk-slim
+#WORKDIR /app
+
+#COPY --from=build /build/target/movie_review*jar ./movie_review.jar
+#EXPOSE 8089
+#CMD ["java", "-jar", "movie_review.jar"]
+
 FROM openjdk:17-jdk-slim
 RUN mkdir /app
 COPY ./target/movie_review*.jar ./app/movie_review.jar
 WORKDIR /app
-
-#COPY --from=build /build/target/movie_review*jar ./movie_review.jar
 
 EXPOSE 8089
 CMD ["java", "-jar", "movie_review.jar"]
