@@ -53,7 +53,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
@@ -66,22 +65,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.junit.jupiter</groupId>-->
-        <!--            <artifactId>junit-jupiter</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
-
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>io.cucumber</groupId>-->
-        <!--            <artifactId>cucumber-junit</artifactId>-->
-        <!--            <scope>test</scope>-->
-        <!--        </dependency>-->
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
@@ -95,16 +84,10 @@
             <version>2.1.214</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jdbc</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.23.0</version>
+            <version>4.24.0</version>
         </dependency>
 
         <dependency>

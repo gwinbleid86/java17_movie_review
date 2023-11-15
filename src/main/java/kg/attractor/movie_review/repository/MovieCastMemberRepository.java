@@ -3,7 +3,9 @@ package kg.attractor.movie_review.repository;
 import kg.attractor.movie_review.model.MovieCastMember;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface MovieCastMemberRepository extends CrudRepository<MovieCastMember, Long> {
     @Query("""
             select mcm.role
