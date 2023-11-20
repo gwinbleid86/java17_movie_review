@@ -13,7 +13,7 @@
 
 FROM openjdk:17-jdk-slim
 RUN mkdir /app
-COPY ./target/movie_review*.jar ./app/movie_review.jar
+COPY ./movie_review*.jar ./app/movie_review.jar
 WORKDIR /app
 
 EXPOSE 8089
