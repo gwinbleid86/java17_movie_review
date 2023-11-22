@@ -16,7 +16,7 @@ on:
 #   branches: [ "main" ]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}/movie_review_image_lesson81:latest
+  IMAGE_NAME: ${{ github.actor }}/movie_review_image:latest
 
 jobs:
   build:
